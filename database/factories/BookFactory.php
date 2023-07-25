@@ -21,6 +21,7 @@ class BookFactory extends Factory
             'name' => $this->faker->name,
             'description' => $this->faker->sentence,
             'publication_year' => (string) $this->faker->year,
+            'price'=> $this->faker->numberBetween(100,1000),
 
         ];
     }
