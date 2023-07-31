@@ -64,3 +64,36 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+
+
+User
+    - register user
+    - login user
+Book
+    - get book list
+    - get a single
+    - update book
+    - delete book
+Author
+    - get authors list
+    - get a single
+    - update book
+    - delete book
+
+
+
+1) To generate a fake data 
+
+a)make sure one of the following line of code is inside run method of DatabaseSeeder.php
+    public function run(): void
+    {
+        /* uncomment one which is being used and comment one which is not being used */
+
+        $this->call(AuthorSeeder::class);      // this code to generate fake data for authors
+
+        $this->call(BookSeeder::class);        // this code to generate fake data for books
+    }
+
+b) run following command
+    php artisan migrate --seed
