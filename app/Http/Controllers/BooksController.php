@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 
 use App\Models\Book;
+use App\Models\Author;
+
 use Illuminate\Http\Request;
 use App\Http\Resources\BooksResource;
 use App\Http\Requests\UpdateBookRequest;
@@ -32,14 +34,17 @@ class BooksController extends Controller
      */
     public function store(Request $request)
     {
-        //
-       
         $book = Book::create([
             'name' => $request->name,
             'description' => $request->description,
             'publication_year' => $request->publication_year,
-
         ]);
+       
+        $authorList =  $request->authors;
+        // if (is_array($l)) {
+        // echo('yes');
+        // }
+        $book->author()->attach($authorList);
         return new BooksResource($book);
     }
 
@@ -83,5 +88,16 @@ class BooksController extends Controller
         //
         $book->delete();
         return response(null,204);
+    }
+
+
+    public function searchBook(Request $request){   //$keyword
+        // $keyword = $request['search'] ?? "";
+        $keyword = $request->query('search');
+
+        $resultBook = Book::where('name','LIKE',"%$keyword%")->get();
+
+        return BooksResource::collection($resultBook);
+        // return response()->json($resultBook);
     }
 }

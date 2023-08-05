@@ -12,14 +12,23 @@ class Book extends Model
     protected $fillable = ['name','description','publication_year']; 
 
     public function author(){
-        return $this->hasManyThrough(
-            '\App\Models\Author',
-            'App\Models\BookAuthor',
-            // below parameters are optional 
-            'book_id',
-            'id',
-            'id',
-            'author_id',
+        return $this->belongsToMany(
+            Author::class,
+            'book_author'
         );
     }
 }
+
+
+
+// public function author(){
+//     return $this->hasManyThrough(
+//         '\App\Models\Author',
+//         'App\Models\BookAuthor',
+//         // below parameters are optional 
+//         'book_id',
+//         'id',
+//         'id',
+//         'author_id',
+//     );
+// }
