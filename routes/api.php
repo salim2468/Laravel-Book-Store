@@ -37,8 +37,14 @@ Route::middleware('auth:api')->group(function () {
     // in place of defining each route use apiResource
 
     Route::apiResource('/authors',AuthorsController::class);
+    
+    Route::get('/books/{keyword}',[BooksController::class,'searchBook']);
     Route::apiResource('/books',BooksController::class);
 
 
 });
+
+
+    // Route::get('/books/search/{keyword}',[BooksController::class,'searchBook']);
+    // Route::apiResource('/books',BooksController::class);
 

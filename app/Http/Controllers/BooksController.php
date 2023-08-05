@@ -84,4 +84,15 @@ class BooksController extends Controller
         $book->delete();
         return response(null,204);
     }
+
+
+    public function searchBook(Request $request){   //$keyword
+        // $keyword = $request['search'] ?? "";
+        $keyword = $request->query('search');
+
+        $resultBook = Book::where('name','LIKE',"%$keyword%")->get();
+
+        return BooksResource::collection($resultBook);
+        // return response()->json($resultBook);
+    }
 }
