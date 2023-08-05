@@ -38,8 +38,9 @@ class BooksController extends Controller
             'name' => $request->name,
             'description' => $request->description,
             'publication_year' => $request->publication_year,
+            'price' => $request->price,
         ]);
-       
+
         $authorList =  $request->authors;
         // if (is_array($l)) {
         // echo('yes');
@@ -54,7 +55,7 @@ class BooksController extends Controller
     public function show(Book $book)
     {
         return new BooksResource($book);
-//        return $book->author;
+        //        return $book->author;
 
     }
 
@@ -70,32 +71,54 @@ class BooksController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, Book $book)
-    {   
+    {
+        echo ($book);
         //
+        // $book->update([
+        //     'name' => $request->name,
+        //     'description' => $request->description,
+        //     'publication_year' => $request->publication_year,
+        //     'price' => $request->price
+        // ]);
+
+        $book = Book::findOrFail($book->id);
         $book->update([
             'name' => $request->name,
             'description' => $request->description,
-            'publication_year' => $request->publication_year
+            'publication_year' => $request->publication_year,
+            'price' => $request->price,
         ]);
+        $book->author()->detach();
+        $authorList = $request->authors;
+        $book->author()->attach($authorList);
+
         return new BooksResource($book);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Book $book)
+    public function destroy($id)
     {
-        //
+        echo ($id);
+        $book = Book::find($id);
+
+        if (!$book) {
+            return response()->json(['message' => 'Book not found'], 404);
+        }
+        $book->author()->detach();
         $book->delete();
-        return response(null,204);
+        return response()->json(['message' => 'Book deleted successfully'], 200);
+        // return response(null,204);
     }
 
 
-    public function searchBook(Request $request){   //$keyword
+    public function searchBook(Request $request)
+    {   //$keyword
         // $keyword = $request['search'] ?? "";
         $keyword = $request->query('search');
 
-        $resultBook = Book::where('name','LIKE',"%$keyword%")->get();
+        $resultBook = Book::where('name', 'LIKE', "%$keyword%")->get();
 
         return BooksResource::collection($resultBook);
         // return response()->json($resultBook);
