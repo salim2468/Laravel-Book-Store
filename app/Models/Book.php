@@ -9,7 +9,7 @@ class Book extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name','description','publication_year']; 
+    protected $fillable = ['name','description','publication_year','price']; 
 
     public function author(){
         return $this->belongsToMany(
