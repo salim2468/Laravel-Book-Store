@@ -2,23 +2,20 @@
 
 namespace App\Http\Controllers;
 
-
 use App\Models\Book;
-use App\Models\Author;
-
 use Illuminate\Http\Request;
 use App\Http\Resources\BooksResource;
-use App\Http\Requests\UpdateBookRequest;
 
 class BooksController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
-        return BooksResource::collection(Book::all());
+        echo($request->limit);
+        $page_size = request('limit',20);
+        return BooksResource::collection(Book::paginate($page_size));
     }
 
     /**
@@ -42,9 +39,6 @@ class BooksController extends Controller
         ]);
 
         $authorList =  $request->authors;
-        // if (is_array($l)) {
-        // echo('yes');
-        // }
         $book->author()->attach($authorList);
         return new BooksResource($book);
     }
@@ -55,7 +49,7 @@ class BooksController extends Controller
     public function show(Book $book)
     {
         return new BooksResource($book);
-        //        return $book->author;
+        // return $book->author;
 
     }
 
@@ -72,8 +66,6 @@ class BooksController extends Controller
      */
     public function update(Request $request, Book $book)
     {
-        echo ($book);
-        //
         // $book->update([
         //     'name' => $request->name,
         //     'description' => $request->description,
@@ -112,15 +104,9 @@ class BooksController extends Controller
         // return response(null,204);
     }
 
-
-    public function searchBook(Request $request)
-    {   //$keyword
-        // $keyword = $request['search'] ?? "";
-        $keyword = $request->query('search');
-
-        $resultBook = Book::where('name', 'LIKE', "%$keyword%")->get();
-
+    public function searchBook($search)
+    {   
+        $resultBook = Book::where('name', 'LIKE', "%$search%")->get();
         return BooksResource::collection($resultBook);
-        // return response()->json($resultBook);
     }
 }

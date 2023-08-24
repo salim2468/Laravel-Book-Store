@@ -4,10 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\AuthorsRequest;
 use App\Models\Author;
-use Illuminate\Http\Request;
 use App\Http\Resources\AuthorsResource;
-
-
 
 class AuthorsController extends Controller
 {
@@ -16,7 +13,6 @@ class AuthorsController extends Controller
      */
     public function index()
     {
-        //
         return AuthorsResource::collection(Author::all());
     }
 
@@ -26,7 +22,6 @@ class AuthorsController extends Controller
     public function create()
     {
         //
-        
     }
 
     /**
@@ -37,8 +32,6 @@ class AuthorsController extends Controller
         
         // AuthorsRequest inplace of Request because,
         // validation is done form AuthorsResquest class present in app/Http/Request
-
-
         $author = Author::create([
             'name' => $request->name
         ]);
@@ -71,7 +64,6 @@ class AuthorsController extends Controller
     public function edit(Author $author)
     {
         //
-
     }
 
     /**
@@ -81,7 +73,6 @@ class AuthorsController extends Controller
     {
         // AuthorsRequest inplace of Request because,
         // validation is done form AuthorsResquest class present in app/Http/Request
-
         $author->update([
             'name' => $request->name
         ]);
@@ -96,6 +87,12 @@ class AuthorsController extends Controller
         //
         $author->delete();
         return response(null,204);
-         
+    }
+
+    public function searchAuthor($search)
+
+    {   
+        $resultBook = Author::where('name', 'LIKE', "%$search%")->get();
+        return AuthorsResource::collection($resultBook);
     }
 }

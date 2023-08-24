@@ -46,6 +46,8 @@ Route::middleware('auth:api')->group(function () {
 });
 
     Route::apiResource('/authors',AuthorsController::class);
-    Route::get('/books/search/{keyword}',[BooksController::class,'searchBook']);
+    Route::get('/authors/search/{search}',[AuthorsController::class,'searchAuthor']);
+
     Route::apiResource('/books',BooksController::class);
+    Route::get('/books/search/{search}',[BooksController::class,'searchBook']);
 
