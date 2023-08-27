@@ -9,7 +9,7 @@ class Author extends Model
 {
     use HasFactory;
 
-    protected $fillable =['name'];
+    protected $fillable =['name','image_path'];
 
     protected $hidden =[
         'laravel_through_key',

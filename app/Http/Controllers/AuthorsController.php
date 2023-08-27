@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\AuthorsRequest;
 use App\Models\Author;
+use Illuminate\Http\Request;
+use App\Http\Requests\AuthorsRequest;
 use App\Http\Resources\AuthorsResource;
+use Illuminate\Support\Facades\Storage;
 
 class AuthorsController extends Controller
 {
@@ -95,4 +97,29 @@ class AuthorsController extends Controller
         $resultBook = Author::where('name', 'LIKE', "%$search%")->get();
         return AuthorsResource::collection($resultBook);
     }
+
+    public function uploadImage(Request $request)
+    {
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imageName = time() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('profile'), $imageName);
+            
+            // TODO dynamic id
+            $author=Author::find($request->user_id);
+            $author->update([
+                'image_path'=>'profile/'.$imageName
+            ]);
+
+            return response()->json([
+                'message' => 'Image uploaded successfully',
+                'value'=>'profile/'.$imageName,
+                'user_id'=>$request->user_id,
+            ]);
+        }
+    
+        return response()->json(['message' => 'No image file uploaded'], 400);
+    
+    }
+
 }

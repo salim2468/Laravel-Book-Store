@@ -47,7 +47,10 @@ Route::middleware('auth:api')->group(function () {
 
     Route::apiResource('/authors',AuthorsController::class);
     Route::get('/authors/search/{search}',[AuthorsController::class,'searchAuthor']);
+    Route::post('/authors/img',[AuthorsController::class,'uploadImage']);
+
 
     Route::apiResource('/books',BooksController::class);
     Route::get('/books/search/{search}',[BooksController::class,'searchBook']);
+    
 
