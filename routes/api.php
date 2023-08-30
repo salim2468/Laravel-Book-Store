@@ -52,5 +52,7 @@ Route::middleware('auth:api')->group(function () {
 
     Route::apiResource('/books',BooksController::class);
     Route::get('/books/search/{search}',[BooksController::class,'searchBook']);
+    Route::post('/books/img',[BooksController::class,'uploadImage']);
+
     
 

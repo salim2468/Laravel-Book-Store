@@ -13,8 +13,8 @@ class BooksController extends Controller
      */
     public function index(Request $request)
     {
-        echo($request->limit);
-        $page_size = request('limit',Book::count());
+        echo ($request->limit);
+        $page_size = request('limit', Book::count());
         return BooksResource::collection(Book::paginate($page_size));
     }
 
@@ -37,8 +37,9 @@ class BooksController extends Controller
             'publication_year' => $request->publication_year,
             'price' => $request->price,
             'page_no' => $request->page_no ?? 0,
-            'language'=>$request->language,
-            'isbn'=>$request->isbn,
+            'language' => $request->language,
+            'isbn' => $request->isbn,
+            'genere' => $request->genere,
         ]);
 
         $authorList =  $request->authors;
@@ -67,30 +68,27 @@ class BooksController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request,$id)
+    public function update(Request $request, $id)
     {
-
         $book = Book::find($id);
-        if($book){
-
-        $book->update([
-            'name' => $request->name,
-            'description' => $request->description,
-            'publication_year' => $request->publication_year,
-            'price' => $request->price,
-            'page_no' => $request->page_no,
-            'language'=>$request->language,
-            'isbn'=>$request->isbn,
-        ]);
-        $book->author()->detach();
-        $authorList = $request->authors;
-        $book->author()->attach($authorList);
-
-        return new BooksResource($book);
-    }
-else{
-    return response(['message'=>"No Book found"]);
-}
+        if ($book) {
+            $book->update([
+                'name' => $request->name,
+                'description' => $request->description,
+                'publication_year' => $request->publication_year,
+                'price' => $request->price,
+                'page_no' => $request->page_no,
+                'language' => $request->language,
+                'isbn' => $request->isbn,
+                'genere' => $request->genere,
+            ]);
+            $book->author()->detach();
+            $authorList = $request->authors;
+            $book->author()->attach($authorList);
+            return new BooksResource($book);
+        } else {
+            return response(['message' => "No Book found"]);
+        }
     }
 
     /**
@@ -111,8 +109,32 @@ else{
     }
 
     public function searchBook($search)
-    {   
+    {
         $resultBook = Book::where('name', 'LIKE', "%$search%")->get();
         return BooksResource::collection($resultBook);
+    }
+
+    public function uploadImage(Request $request)
+    {
+        echo ("inside uploadImage");
+        if ($request->hasFile('image')) {
+            // $image = $request->file('image');
+            $image = $request->image;
+
+            $imageName = time() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('book'), $imageName);
+
+            $book = Book::find($request->user_id);
+            $book->update([
+                'image_path' => 'book/' . $imageName
+            ]);
+
+            return response()->json([
+                'message' => 'Image uploaded successfully',
+                'value' => 'profile/' . $imageName,
+                'user_id' => $request->user_id,
+            ]);
+        }
+        return response()->json(['message' => 'No image file uploaded'], 400);
     }
 }

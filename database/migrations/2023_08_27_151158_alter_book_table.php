@@ -15,8 +15,9 @@ return new class extends Migration
             $table->integer('page_no')->nullable();
             $table->string('isbn')->default(getRandomISBN());
             $table->string('language')->nullable();
+            $table->string('image_path')->nullable();
+            $table->string('genere')->nullable();
         });
-
     }
 
     /**
@@ -28,7 +29,8 @@ return new class extends Migration
             $table->dropColumn('page_no');
             $table->dropColumn('isbn');
             $table->dropColumn('language');
-
+            $table->dropColumn('image_path');
+            $table->dropColumn('genere');
         });
     }
 };

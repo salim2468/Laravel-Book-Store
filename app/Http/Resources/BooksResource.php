@@ -26,6 +26,8 @@ class BooksResource extends JsonResource
                 'language'=>$this->language,
                 'isbn'=>$this->isbn,
                 'publication_year'=> $this->publication_year,
+                'image_path'=>$this->image_path,
+                'genere'=>$this->genere,
                 'created_at'=> $this->created_at,
                 'updated_at'=> $this->updated_at,
             ],];
