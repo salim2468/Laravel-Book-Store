@@ -14,7 +14,7 @@ class BooksController extends Controller
     public function index(Request $request)
     {
         echo($request->limit);
-        $page_size = request('limit',20);
+        $page_size = request('limit',Book::count());
         return BooksResource::collection(Book::paginate($page_size));
     }
 
@@ -36,6 +36,9 @@ class BooksController extends Controller
             'description' => $request->description,
             'publication_year' => $request->publication_year,
             'price' => $request->price,
+            'page_no' => $request->page_no ?? 0,
+            'language'=>$request->language,
+            'isbn'=>$request->isbn,
         ]);
 
         $authorList =  $request->authors;
@@ -64,27 +67,30 @@ class BooksController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Book $book)
+    public function update(Request $request,$id)
     {
-        // $book->update([
-        //     'name' => $request->name,
-        //     'description' => $request->description,
-        //     'publication_year' => $request->publication_year,
-        //     'price' => $request->price
-        // ]);
 
-        $book = Book::findOrFail($book->id);
+        $book = Book::find($id);
+        if($book){
+
         $book->update([
             'name' => $request->name,
             'description' => $request->description,
             'publication_year' => $request->publication_year,
             'price' => $request->price,
+            'page_no' => $request->page_no,
+            'language'=>$request->language,
+            'isbn'=>$request->isbn,
         ]);
         $book->author()->detach();
         $authorList = $request->authors;
         $book->author()->attach($authorList);
 
         return new BooksResource($book);
+    }
+else{
+    return response(['message'=>"No Book found"]);
+}
     }
 
     /**
