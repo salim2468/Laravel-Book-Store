@@ -19,7 +19,7 @@ class AuthorsResource extends JsonResource
         'type'=> 'Authors',
         'attributes' => [
             'name'=> $this->name,
-            'image'=> $this->image_path?asset($this->image_path):null,
+            'image_path'=> $this->image_path?asset($this->image_path):null,
             'created_at'=> $this->created_at,
             'updated_at'=> $this->updated_at,
         ],];
