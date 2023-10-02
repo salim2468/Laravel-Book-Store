@@ -16,7 +16,9 @@ class Book extends Model
         'price',
         'page_no',
         'isbn',
-        'language'
+        'language',
+        'image_path',
+        'genere'
     ]; 
 
     public function author(){

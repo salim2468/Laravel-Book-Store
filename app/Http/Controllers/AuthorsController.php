@@ -113,7 +113,6 @@ class AuthorsController extends Controller
             $imageName = time() . '.' . $image->getClientOriginalExtension();
             $image->move(public_path('profile'), $imageName);
             
-            // TODO dynamic id
             $author=Author::find($request->user_id);
             $author->update([
                 'image_path'=>'profile/'.$imageName
