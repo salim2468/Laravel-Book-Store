@@ -37,15 +37,28 @@ Route::middleware('auth:api')->group(function () {
     // in place of defining each route use apiResource
 
     
-    //    uncomment the following 
-    //Route::apiResource('/authors',AuthorsController::class);
-    // Route::get('/books/{keyword}',[BooksController::class,'searchBook']);
-    // Route::apiResource('/books',BooksController::class);
+    /*
+    Route::apiResource('/authors',AuthorsController::class);
+    Route::get('/authors/search/{search}',[AuthorsController::class,'searchAuthor']);
+    Route::post('/authors/img',[AuthorsController::class,'uploadImage']);
 
+
+    Route::apiResource('/books',BooksController::class);
+    Route::get('/books/search/{search}',[BooksController::class,'searchBook']);
+    Route::post('/books/img',[BooksController::class,'uploadImage']);
+
+*/
 
 });
 
     Route::apiResource('/authors',AuthorsController::class);
-    Route::get('/books/search/{keyword}',[BooksController::class,'searchBook']);
+    Route::get('/authors/search/{search}',[AuthorsController::class,'searchAuthor']);
+    Route::post('/authors/img',[AuthorsController::class,'uploadImage']);
+
+
     Route::apiResource('/books',BooksController::class);
+    Route::get('/books/search/{search}',[BooksController::class,'searchBook']);
+    Route::post('/books/img',[BooksController::class,'uploadImage']);
+
+    
 

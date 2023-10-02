@@ -2,23 +2,20 @@
 
 namespace App\Http\Controllers;
 
-
 use App\Models\Book;
-use App\Models\Author;
-
 use Illuminate\Http\Request;
 use App\Http\Resources\BooksResource;
-use App\Http\Requests\UpdateBookRequest;
 
 class BooksController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
-        return BooksResource::collection(Book::all());
+        echo ($request->limit);
+        $page_size = request('limit', Book::count());
+        return BooksResource::collection(Book::paginate($page_size));
     }
 
     /**
@@ -39,12 +36,13 @@ class BooksController extends Controller
             'description' => $request->description,
             'publication_year' => $request->publication_year,
             'price' => $request->price,
+            'page_no' => $request->page_no ?? 0,
+            'language' => $request->language,
+            'isbn' => $request->isbn,
+            'genere' => $request->genere,
         ]);
 
         $authorList =  $request->authors;
-        // if (is_array($l)) {
-        // echo('yes');
-        // }
         $book->author()->attach($authorList);
         return new BooksResource($book);
     }
@@ -55,7 +53,7 @@ class BooksController extends Controller
     public function show(Book $book)
     {
         return new BooksResource($book);
-        //        return $book->author;
+        // return $book->author;
 
     }
 
@@ -70,29 +68,27 @@ class BooksController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Book $book)
+    public function update(Request $request, $id)
     {
-        echo ($book);
-        //
-        // $book->update([
-        //     'name' => $request->name,
-        //     'description' => $request->description,
-        //     'publication_year' => $request->publication_year,
-        //     'price' => $request->price
-        // ]);
-
-        $book = Book::findOrFail($book->id);
-        $book->update([
-            'name' => $request->name,
-            'description' => $request->description,
-            'publication_year' => $request->publication_year,
-            'price' => $request->price,
-        ]);
-        $book->author()->detach();
-        $authorList = $request->authors;
-        $book->author()->attach($authorList);
-
-        return new BooksResource($book);
+        $book = Book::find($id);
+        if ($book) {
+            $book->update([
+                'name' => $request->name,
+                'description' => $request->description,
+                'publication_year' => $request->publication_year,
+                'price' => $request->price,
+                'page_no' => $request->page_no,
+                'language' => $request->language,
+                'isbn' => $request->isbn,
+                'genere' => $request->genere,
+            ]);
+            $book->author()->detach();
+            $authorList = $request->authors;
+            $book->author()->attach($authorList);
+            return new BooksResource($book);
+        } else {
+            return response(['message' => "No Book found"]);
+        }
     }
 
     /**
@@ -112,15 +108,33 @@ class BooksController extends Controller
         // return response(null,204);
     }
 
-
-    public function searchBook(Request $request)
-    {   //$keyword
-        // $keyword = $request['search'] ?? "";
-        $keyword = $request->query('search');
-
-        $resultBook = Book::where('name', 'LIKE', "%$keyword%")->get();
-
+    public function searchBook($search)
+    {
+        $resultBook = Book::where('name', 'LIKE', "%$search%")->get();
         return BooksResource::collection($resultBook);
-        // return response()->json($resultBook);
+    }
+
+    public function uploadImage(Request $request)
+    {
+        echo ("inside uploadImage");
+        if ($request->hasFile('image')) {
+            // $image = $request->file('image');
+            $image = $request->image;
+
+            $imageName = time() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('book'), $imageName);
+
+            $book = Book::find($request->user_id);
+            $book->update([
+                'image_path' => 'book/' . $imageName
+            ]);
+
+            return response()->json([
+                'message' => 'Image uploaded successfully',
+                'value' => 'profile/' . $imageName,
+                'user_id' => $request->user_id,
+            ]);
+        }
+        return response()->json(['message' => 'No image file uploaded'], 400);
     }
 }

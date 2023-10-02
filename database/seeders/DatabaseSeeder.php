@@ -22,8 +22,8 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
 
-        // $this->call(AuthorSeeder::class);   // this code to generate fake data for authors
+        $this->call(AuthorSeeder::class);   // this code to generate fake data for authors
 
-        $this->call(BookSeeder::class);        // this code to generate fake data for books
+        //$this->call(BookSeeder::class);        // this code to generate fake data for books
     }
 }
