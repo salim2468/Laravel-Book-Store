@@ -19,8 +19,6 @@ class Book extends Model
     }
 }
 
-
-
 // public function author(){
 //     return $this->hasManyThrough(
 //         '\App\Models\Author',

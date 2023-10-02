@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\AuthorsRequest;
 use App\Models\Author;
 use Illuminate\Http\Request;
+use App\Http\Requests\AuthorsRequest;
 use App\Http\Resources\AuthorsResource;
-
-
+use Illuminate\Support\Facades\Storage;
 
 class AuthorsController extends Controller
 {
@@ -16,7 +15,6 @@ class AuthorsController extends Controller
      */
     public function index()
     {
-        //
         return AuthorsResource::collection(Author::all());
     }
 
@@ -26,7 +24,6 @@ class AuthorsController extends Controller
     public function create()
     {
         //
-        
     }
 
     /**
@@ -37,8 +34,6 @@ class AuthorsController extends Controller
         
         // AuthorsRequest inplace of Request because,
         // validation is done form AuthorsResquest class present in app/Http/Request
-
-
         $author = Author::create([
             'name' => $request->name
         ]);
@@ -71,7 +66,6 @@ class AuthorsController extends Controller
     public function edit(Author $author)
     {
         //
-
     }
 
     /**
@@ -81,7 +75,6 @@ class AuthorsController extends Controller
     {
         // AuthorsRequest inplace of Request because,
         // validation is done form AuthorsResquest class present in app/Http/Request
-
         $author->update([
             'name' => $request->name
         ]);
@@ -96,6 +89,37 @@ class AuthorsController extends Controller
         //
         $author->delete();
         return response(null,204);
-         
     }
+
+    public function searchAuthor($search)
+
+    {   
+        $resultBook = Author::where('name', 'LIKE', "%$search%")->get();
+        return AuthorsResource::collection($resultBook);
+    }
+
+    public function uploadImage(Request $request)
+    {
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imageName = time() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('profile'), $imageName);
+            
+            // TODO dynamic id
+            $author=Author::find($request->user_id);
+            $author->update([
+                'image_path'=>'profile/'.$imageName
+            ]);
+
+            return response()->json([
+                'message' => 'Image uploaded successfully',
+                'value'=>'profile/'.$imageName,
+                'user_id'=>$request->user_id,
+            ]);
+        }
+    
+        return response()->json(['message' => 'No image file uploaded'], 400);
+    
+    }
+
 }
