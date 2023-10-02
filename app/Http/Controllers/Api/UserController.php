@@ -13,19 +13,19 @@ class UserController extends Controller
     public function register(Request $request){
         $validatedData = $request->validate([
             'name' => 'required',
-            'email' => ['required','email'],
+            'email' => ['required','unique:email','unique:users'],
             'password' => ['required','min:4'],
         ]);
 
-        $user = User::create($validatedData);
-        $token = $user->createToken("auth_token")->accessToken;
+        $newUser = User::create($validatedData);
+        $token = $newUser->createToken("auth_token")->accessToken;
 
         return response()->json(
             [
                 'token' => $token,
-                'user' => $user,
+                'user' => $newUser,
                 'message' => 'User created successfully',
-                'status' => 1
+                'status' => 201
             ]
         );
     }
@@ -35,15 +35,15 @@ class UserController extends Controller
         $validatedData = $request->validate([
             'email' => ['required','email'],
             'password' => ['required'],
-        ]); 
+        ]);
         // echo($request->email);
         // die();
-        
+
         // $allUser = User::all();
         // return $allUser;
-        
+
         $user = User::where('email',$request->email)->first();
-        
+
 
         if($user){
             $token = $user->createToken("auth_token")->accessToken;
@@ -77,11 +77,11 @@ class UserController extends Controller
                     'status' => 1
                 ]
             );
-        }   
+        }
 
     }
 
-   
+
 
 
     public function getAllUser(){
@@ -102,7 +102,7 @@ class UserController extends Controller
                     'status' => 1
                 ]
             );
-        }   
+        }
 
     }
 }
